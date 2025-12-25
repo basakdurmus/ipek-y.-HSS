@@ -1,0 +1,26 @@
+// step_motor_arayuz.h
+// Bu dosya step motorun NASIL kullanıldığını söyler
+// AMA NASIL çalıştığını söylemez
+
+#pragma once
+
+// Step motora gönderilecek komut yapısı
+struct StepMotorKomut {
+  float hedef_hiz_derece_saniye; // derece/saniye
+};
+
+// Step motorun dışarıya bildirdiği durum
+struct StepMotorDurum {
+  float anlik_hiz_derece_saniye;
+  float pozisyon_derece;
+};
+
+// Bu bir SOYUT sınıftır
+// Donanım bilgisi İÇERMEZ
+class StepMotorArayuz {
+public:
+  virtual void baslat() = 0;                      // motoru hazırla
+  virtual void komutAyarla(const StepMotorKomut& komut) = 0;
+  virtual void guncelle(float dt_saniye) = 0;    // zaman adımı
+  virtual StepMotorDurum durumOku() const = 0;
+};
