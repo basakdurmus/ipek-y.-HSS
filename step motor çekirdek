@@ -1,0 +1,32 @@
+// step_motor_cekirdek.h
+#pragma once
+
+#include "step_motor_arayuz.h"
+
+// Bu sınıf step motorun MATEMATİKSEL MODELİDİR
+// Donanımdan tamamen bağımsızdır
+class StepMotorCekirdek : public StepMotorArayuz {
+public:
+  void baslat() override;
+  void komutAyarla(const StepMotorKomut& komut) override;
+  void guncelle(float dt_saniye) override;
+  StepMotorDurum durumOku() const override;
+
+private:
+  // --- MOTOR PARAMETRELERİ ---
+  float derece_basina_adim;   // 1 derece için kaç step
+  float maksimum_ivme;        // derece/saniye^2
+
+  // --- MOTOR DURUMU ---
+  float hedef_hiz;            // derece/saniye
+  float anlik_hiz;            // derece/saniye
+  float pozisyon;             // derece
+
+  // Hız yumuşatma fonksiyonu
+  float hizYumusat(
+    float mevcut,
+    float hedef,
+    float ivme,
+    float dt
+  );
+};
