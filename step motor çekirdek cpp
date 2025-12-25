@@ -1,0 +1,65 @@
+// step_motor_cekirdek.cpp
+
+#include "step_motor_cekirdek.h"
+#include <cmath>
+
+// Motoru başlat
+void StepMotorCekirdek::baslat() {
+  // 1 tur = 200 step
+  // 16 mikrostep → 3200 step
+  // 360 derece → 3200 step
+  derece_basina_adim = 3200.0f / 360.0f;
+
+  maksimum_ivme = 120.0f;
+
+  hedef_hiz = 0;
+  anlik_hiz = 0;
+  pozisyon = 0;
+}
+
+// Üst sistemden gelen komutu ayarla
+void StepMotorCekirdek::komutAyarla(const StepMotorKomut& komut) {
+  hedef_hiz = komut.hedef_hiz_derece_saniye;
+}
+
+// Her döngüde çağrılır
+void StepMotorCekirdek::guncelle(float dt_saniye) {
+
+  // 1️⃣ İvme sınırı ile hızı yumuşat
+  anlik_hiz = hizYumusat(
+    anlik_hiz,
+    hedef_hiz,
+    maksimum_ivme,
+    dt_saniye
+  );
+
+  // 2️⃣ Pozisyonu güncelle
+  pozisyon += anlik_hiz * dt_saniye;
+}
+
+// Motor durumunu dışarı ver
+StepMotorDurum StepMotorCekirdek::durumOku() const {
+  StepMotorDurum durum;
+  durum.anlik_hiz_derece_saniye = anlik_hiz;
+  durum.pozisyon_derece = pozisyon;
+  return durum;
+}
+
+// Hız geçişini yumuşatan fonksiyon
+float StepMotorCekirdek::hizYumusat(
+  float mevcut,
+  float hedef,
+  float ivme,
+  float dt
+) {
+  float fark = hedef - mevcut;
+  float max_degisim = ivme * dt;
+
+  if (std::abs(fark) < max_degisim)
+    return hedef;
+
+  if (fark > 0)
+    return mevcut + max_degisim;
+  else
+    return mevcut - max_degisim;
+}
