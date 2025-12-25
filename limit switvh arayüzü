@@ -1,0 +1,10 @@
+// limit_switch_arayuz.h
+// Limit switch'in NE olduğunu söyler, NASIL olduğunu değil
+
+#pragma once
+
+class LimitSwitchArayuz {
+public:
+  // Limit switch basılı mı?
+  virtual bool tetiklenmisMi() const = 0;
+};
